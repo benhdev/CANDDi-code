@@ -1,5 +1,5 @@
-var pageInfo = false;
-var emailInfo = false;
+var pageInfo = "";
+var emailInfo = "";
 var prompt = require('prompt');
 
 prompt.start();
@@ -15,7 +15,7 @@ const port = 3000;
 
 const req = http.request("http://teamupgrade.co.uk/", (res) => {  
 	res.on('data', function(data) {
-		pageInfo = data;
+		pageInfo += data;
 	});
 });
 
