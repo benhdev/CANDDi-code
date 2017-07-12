@@ -1,8 +1,13 @@
 var pageInfo = "";
 var emailInfo = "";
 var prompt = require("prompt");
-var pattern = "[A-z0-9].+[@][A-z0-9]+[.][A-z0-9]+";
-var regx = new RegExp(pattern, "g");
+
+var pattern = /[^\s][A-z0-9]+[@][A-z0-9]+[.][A-z0-9]+[^,\s]/g ;
+var eregx = new RegExp(pattern, "g");
+
+var lPattern = /[^\s][https:// | http://][A-z0-9].+[.][A-z0-9/].+[^\s]/g ;
+
+var lregx = new RegExp(lPattern, "g"); 
 
 // Implementation of the web crawler
 var crawler = require("crawler");
@@ -16,19 +21,18 @@ var cr = new crawler({
 			var $ = res.$;
 			var result;
 			var resCount = 0;
-			while(result = regx.exec($("html").text())) {
+			while(result = eregx.exec($("html").text())) {
 				var match = result[0];
 				console.log(match);
 			}
+			while(result = lregx.exec($("html").text())) {
+				var match = result[0];
+				console.log(match);
+			}
+			
 		}
 		done();
 	}
-});
-
-prompt.start();
-
-prompt.get(["email"], function (err, result) {
-	emailInfo = result.email;
 });
 
 const http = require("http");
@@ -44,8 +48,10 @@ const server = http.createServer((req, res) => {
 	if(emailInfo != "") {
 		var emailDomain = emailInfo.substring(emailInfo.search("@") + 1);
 		
-		var checked = [];
-		cr.queue("https://www." + emailDomain);
+		if(pageInfo != "") {
+			var checked = [];
+			cr.queue("https://www." + emailDomain);
+		}
 		
 		const req = https.request("https://www." + emailDomain, (res) => {  
 			res.on("data", function(data) {
@@ -61,5 +67,11 @@ const server = http.createServer((req, res) => {
 
 
 server.listen(port, hostname, () => {
-//	console.log(`Server running at http://${hostname}:${port}/`);
+	console.log(`Server running at http://${hostname}:${port}/`);
+	
+	prompt.start();
+
+	prompt.get(["email"], function (err, result) {
+		emailInfo = result.email;
+	});
 });
