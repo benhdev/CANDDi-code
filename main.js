@@ -2,12 +2,8 @@ var pageInfo = "";
 var emailInfo = "";
 var prompt = require("prompt");
 
-var pattern = /[^\s][A-z0-9]+[@][A-z0-9]+[.][A-z0-9]+[^,\s]/g ;
+var pattern = /(https?:\/\/|www\.|[-a-zA-Z0-9@:%._\+~#=]+\@)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9:%_\+.~#?&//=]*)/g ;
 var eregx = new RegExp(pattern, "g");
-
-var lPattern = /[^\s][https:// | http://][A-z0-9].+[.][A-z0-9/].+[^\s]/g ;
-
-var lregx = new RegExp(lPattern, "g"); 
 
 // Implementation of the web crawler
 var crawler = require("crawler");
@@ -24,12 +20,7 @@ var cr = new crawler({
 			while(result = eregx.exec($("html").text())) {
 				var match = result[0];
 				console.log(match);
-			}
-			while(result = lregx.exec($("html").text())) {
-				var match = result[0];
-				console.log(match);
-			}
-			
+			}			
 		}
 		done();
 	}
